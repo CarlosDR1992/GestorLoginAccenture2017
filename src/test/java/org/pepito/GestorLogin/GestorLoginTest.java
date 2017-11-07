@@ -56,8 +56,6 @@ public class GestorLoginTest {
     } catch (ExcepcionUsuarioDesconocido e) {
       verify(repo).buscar("manolo");
     }
-
-
   }
 
   @Test
@@ -146,6 +144,7 @@ public class GestorLoginTest {
     login.acceder("pepe", "12345");
     
     verify(cuenta).estaEnUso();
+    verify(cuenta, never()).entrarCuenta();
 
   }
 }
