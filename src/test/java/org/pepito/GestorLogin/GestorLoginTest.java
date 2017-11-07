@@ -119,17 +119,15 @@ public class GestorLoginTest {
 
   @Test
   public void otroUsuarioPuedeAccederTrasBloqueo() {
-    when(cuenta.claveCorrecta("12345")).thenReturn(false);
-
-    login.acceder("pepe", "12345");
-
-    assertThat(login.getNumFallos(), is(1));
-    verify(cuenta).bloquearCuenta();
+    ICuenta cuenta1 = mock(ICuenta.class);
+    when(cuenta.estaBloqueada()).thenReturn(true);
+    when(cuenta1.claveCorrecta("12345")).thenReturn(true);
+    when(repo.buscar("carlos")).thenReturn(cuenta1);
 
     login.acceder("carlos", "12345");
 
-    verify(cuenta, times(1)).entrarCuenta();
-    verify(cuenta, never()).bloquearCuenta();
+    verify(cuenta1, times(1)).entrarCuenta();
+    verify(cuenta1, never()).bloquearCuenta();
   }
   
   @Test
@@ -143,12 +141,11 @@ public class GestorLoginTest {
 
   @Test(expected = ExcepcionCuentaEnUso.class)
   public void seDeniegaAccesoCuentasEnUso() {
-    when(cuenta.claveCorrecta("12345")).thenReturn(true);
-
-    verify(cuenta).estaEnUso();
+    when(cuenta.estaEnUso()).thenReturn(true);
 
     login.acceder("pepe", "12345");
-
+    
+    verify(cuenta).estaEnUso();
 
   }
 }
